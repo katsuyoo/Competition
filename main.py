@@ -39,7 +39,7 @@ def score(y_test,y_pred):
     r=(pre_act+1)/(act0+1)
     return 5*p*r/(2*p+3*r)*100
 
-train_df=pd.read_csv('/home/frank/data/mouse/train.csv')
+train_df=pd.read_csv('/home/frank/data/mouse/expand_train.csv')
 test_df=pd.read_csv('/home/frank/data/mouse/test.csv')
 
 # print train_df.describe()
@@ -48,10 +48,10 @@ X=train_df.drop(['label'],axis=1)
 y_train=train_df['label']
 X_test=test_df.drop(['id'],axis=1)
 Id=test_df['id']
-# X_train=X.values
-# X_test=X_test.values
-X_train=standard_data(X)
-X_test=standard_data(X_test)
+X_train=X.values
+X_test=X_test.values
+# X_train=standard_data(X)
+# X_test=standard_data(X_test)
 
 # print X_train.shape[0]
 

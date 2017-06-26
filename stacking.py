@@ -16,17 +16,17 @@ from sklearn.linear_model import LogisticRegression
 class Stack(object):
     def __init__(self):
         self.random_rate=33
-        clf1=LinearSVC(C=60, random_state=33)
+        clf1=SVC(C=1.0,random_state=33)
         clf2=XGBClassifier(n_estimators=220,learning_rate=0.2,min_child_weight=2.3)
-        clf3=RandomForestClassifier(n_estimators=10,random_state=330,n_jobs=-1)
-        clf4=BaggingClassifier(n_estimators=10,random_state=101)
-        clf5=AdaBoostClassifier(n_estimators=140,learning_rate=1.6,random_state=33)
-        clf6=GradientBoostingClassifier(n_estimators=160,learning_rate=0.23,random_state=33)
+        clf3=RandomForestClassifier(n_estimators=80,random_state=330,n_jobs=-1)
+        clf4=BaggingClassifier(n_estimators=40,random_state=101)
+        clf5=AdaBoostClassifier(n_estimators=70,learning_rate=1.5,random_state=33)
+        clf6=GradientBoostingClassifier(n_estimators=250,learning_rate=0.23,random_state=33)
 
-        clf7=XGBClassifier(n_estimators=220,learning_rate=0.2,min_child_weight=4)
+        clf7=XGBClassifier(n_estimators=100,learning_rate=0.12,min_child_weight=1)
 
         base_model=[
-            ['lsvc',clf1],
+            ['svc',clf1],
             ['xgbc',clf2],
             ['rfc',clf3],
             ['bgc',clf4],

@@ -17,24 +17,35 @@ def count(data1,data2):
     cnt=0
     data1=data1['id']
     data2=data2['id']
+    res=[]
     while i<n and j<m:
         if data1[i]==data2[j]:
             cnt+=1
+            res.append(data1[i])
             i+=1
             j+=1
         else:
             if data1[i]>data2[j]:
+                # res.append(data2[j])
                 j+=1
             else:
+                # res.append(data1[i])
                 i+=1
     print cnt
+    # res_df=pd.DataFrame({'id':res,'label':0})
+    # res_df.to_csv('/home/frank/data/mouse/black.csv',index=None)
 
 
-# calc(12941,25350)
-# calc(11100,20569)
-# calc(12941,24217)
-# data1=pd.read_csv('/home/frank/data/mouse/submission.csv')
-# data2=pd.read_csv('/home/frank/data/mouse/submission4.csv')
+calc(8538,10000)
+# calc(11130,20569)
+# calc(12500,23737)
+# calc(11220,17177)
+calc(8167,12580)
+# calc(14000,25000)
+# calc(11735,13745)
+
+# data1=pd.read_csv('/home/frank/data/mouse/12580.csv')
+# data2=pd.read_csv('/home/frank/data/mouse/10000(66.54: 12580&25020).csv')
 # count(data1,data2)
 
 # train_df=pd.read_csv('/home/frank/data/mouse/train.csv')

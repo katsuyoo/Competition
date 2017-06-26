@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import make_scorer
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import train_test_split
 
 from xgboost.sklearn import XGBClassifier
 from sklearn.svm import LinearSVC,SVC
@@ -46,10 +47,10 @@ def score(y_test,y_pred):
     return 5*p*r/(2*p+3*r)*100
 
 def cv(X,y):
-    xgb = XGBClassifier(n_estimators=220,learning_rate=0.2,min_child_weight=2.3)
+    xgb = XGBClassifier(n_estimators=220,learning_rate=0.2,min_child_weight=4)
     xgb.fit(X,y)
     sc=make_scorer(score)
-    print cross_val_score(xgb,X,y,scoring=sc,cv=4).mean()
+    print cross_val_score(xgb,X,y,scoring=sc,cv=5,n_jobs=-1).mean()
     print xgb.feature_importances_
 
 def standard_data(X):
@@ -61,7 +62,7 @@ def parm_search(clf,params,X_train,y_train):
     print 'search......'
     sc=make_scorer(score)
     if __name__ == '__main__':
-        gs=GridSearchCV(clf,params,cv=4,scoring=sc,n_jobs=-1)
+        gs=GridSearchCV(clf,params,cv=5,scoring=sc,n_jobs=-1)
         gs.fit(X_train,y_train)
         print gs.best_score_
         print gs.best_params_
@@ -72,7 +73,7 @@ def to_submission(y_pred,id):
     print n
     res=[]
     for i in range(n):
-        if y_pred[i]==0:
+        if y_pred[i] == 0:
             res.append(id[i])
 
     print len(res)
@@ -83,54 +84,71 @@ def to_submission(y_pred,id):
 
 train_df=pd.read_csv('/home/frank/data/mouse/train.csv')
 test_df=pd.read_csv('/home/frank/data/mouse/test.csv')
-# print test_df.info()
+# black_df=pd.read_csv('/home/frank/data/mouse/black.csv')
 
+#  扩充训练集
+# add_train_df=pd.merge(test_df,black_df,on='id')
+# print add_train_df.info()
+# add_train_df=add_train_df.drop(['id'],axis=1)
+# train_df=pd.concat([train_df,add_train_df])
+# train_df.to_csv('/home/frank/data/mouse/expand_train.csv',index=None)
+
+# 查看数据集统计信息
+# print train_df.info()
+# print test_df.info()
 # describe(train_df)
 # print train_df['tan'].value_counts()
-
-# print train_df[train_df['label']==1].describe()
-# print '-'*100
-# print train_df[train_df['label']==0].describe()
+# print train_df.describe()
+print train_df[train_df['label']==1].describe()
+print '-'*100
+print train_df[train_df['label']==0].describe()
+# print test_df.describe()
 
 X=train_df.drop(['label'],axis=1)
-y_train=train_df['label']
+y=train_df['label']
+X_train,X_val,y_train,y_val=train_test_split(X,y,test_size=0.1,random_state=33)
+
+# print X.info()
+
 X_test=test_df.drop(['id'],axis=1)
 Id=test_df['id']
 
-# X_train=X
-X_train=standard_data(X)
-X_test=standard_data(X_test)
+
+# X_train=standard_data(X_train)
+# X_val=standard_data(X_val)
+# X_test=standard_data(X_test)
 
 # cv(X_train,y_train)
-#
-# clf=XGBClassifier(n_estimators=100,learning_rate=0.3,min_child_weight=1)
-# params={'n_estimators':np.arange(100,200,10)}
-# params={'learning_rate': np.arange(0.2, 0.5, 0.02)}
+# 调参
+# clf=XGBClassifier(n_estimators=100,learning_rate=0.12,min_child_weight=1)
+# params={'n_estimators':np.arange(100,500,100)}
+# params={'learning_rate': np.arange(0.1, 0.5, 0.02)}
 
-# clf=LinearSVC(C=150,random_state=33)
-# params={"C":np.arange(100,200,10)}
+# clf=SVC(C=1.0,random_state=33)
+# params={"C":np.arange(1,5,1)}
 
-# clf=RandomForestClassifier(n_estimators=70,random_state=330)
+# clf=RandomForestClassifier(n_estimators=80,random_state=330)
 # params={'n_estimators':np.arange(10,100,10)}
 
-clf=GradientBoostingClassifier(n_estimators=220,learning_rate=0.23)
+# clf=GradientBoostingClassifier(n_estimators=250,learning_rate=0.23)
 # params={'n_estimators':np.arange(100,400,10)}
-params={'learning_rate': np.arange(0.1, 0.3, 0.01)}
+# params={'learning_rate': np.arange(0.1, 0.3, 0.1)}
 
-# clf=BaggingClassifier(n_estimators=10,random_state=101)
+# clf=BaggingClassifier(n_estimators=40,random_state=101)
 # params={'n_estimators':np.arange(10,100,10)}
 
-# clf=AdaBoostClassifier(n_estimators=140,learning_rate=1.6,random_state=33)
+# clf=AdaBoostClassifier(n_estimators=70,learning_rate=1.5,random_state=33)
 # params={'n_estimators':np.arange(10,200,10)}
-# params={'learning_rate': np.arange(1.3, 2.0, 0.1)}
+# params={'learning_rate': np.arange(0.5, 2.0, 0.1)}
 
-parm_search(clf,params,X_train,y_train)
+# parm_search(clf,params,X_train,y_train)
 
 
 # model training
 # xgb=XGBClassifier(n_estimators=220,learning_rate=0.2,min_child_weight=4)
 # xgb.fit(X_train,y_train)
 # y_pred=xgb.predict(X_test)
+# print score(y_val,y_pred)
 # to_submission(y_pred,Id)
 
 

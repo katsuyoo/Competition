@@ -95,8 +95,7 @@ def extract_train_features(data,p_data,label):
     x_avg_speed=[]
     x_sum_distances=[]
 
-
-
+    x_distance = []  # 终点位置和目标位置x轴的距离
     xv_var=[] #速度的方差
     ax_var=[] #加速度的方差
     x_var=[] #水平位移的方差
@@ -204,6 +203,8 @@ def extract_train_features(data,p_data,label):
         x_var.append(np.var(x_shift))
         time_var.append(np.var(time))
 
+        x_distance.append(abs(data[i][-1][0] - p_data[i][0]))
+
     # print len(tot_time),len(start_speed),len(avg_speed),len(distance),len(sum_distances),len(tans),len(start_x),len(max_tan_differences),len(label)
 
     # train_df=pd.DataFrame({'tot_time':tot_time,'x_start_speed':x_start_speed,'x_twenty_per_speed':x_twenty_per_speed,
@@ -214,11 +215,10 @@ def extract_train_features(data,p_data,label):
     #     'eighty_per_speed':eighty_per_speed,'end_speed':end_speed,
     #     'tan':tans,'max_tan_difference':max_tan_differences,'tot_time':tot_time,'sum_distance':sum_distances,'label':label})
     # train_df=pd.DataFrame({'end_speed':end_speed,'tan':tans,'start_x':start_x,'label':label})
-    train_df=pd.DataFrame({'tot_time':tot_time,'start_speed':start_speed,'median_speed':median_speed,'end_speed':end_speed,
-        'avg_speed':avg_speed,'distance':distance,'sum_distance':sum_distances,'tan':tans,'start_x':start_x,
-                           'xv_var':xv_var,'ax_var':ax_var,'x_var':x_var,'time_var':time_var,'label':label})
-    # train_df = pd.DataFrame({'tan': tans,'xv_var':xv_var,'ax_var':ax_var,'x_var':x_var,'time_var':time_var,
-    #                          'start_x':start_x,'end_speed':end_speed,'label':label})
+    # train_df=pd.DataFrame({'tot_time':tot_time,'start_speed':start_speed,'median_speed':median_speed,'end_speed':end_speed,
+    #     'avg_speed':avg_speed,'distance':distance,'sum_distance':sum_distances,'tan':tans,'label':label})
+    train_df = pd.DataFrame({'tan': tans,'xv_var':xv_var,'ax_var':ax_var,'time_var':time_var,
+                             'start_x':start_x,'x_end_speed':x_end_speed,'label':label})
     train_df.to_csv('/home/frank/data/mouse/train.csv',index=None)
 
 
@@ -251,7 +251,7 @@ def extract_test_features(id,data,p_data):
     x_sum_distances=[]
 
 
-
+    x_distance=[] #终点位置和目标位置x轴的距离
     xv_var=[] #速度的方差
     ax_var=[] #加速度的方差
     x_var=[] #水平位移的方差
@@ -359,6 +359,8 @@ def extract_test_features(id,data,p_data):
         x_var.append(np.var(x_shift))
         time_var.append(np.var(time))
 
+        x_distance.append(abs(data[i][-1][0] - p_data[i][0]))
+
     # test_df=pd.DataFrame({'id':id,'tot_time':tot_time,'x_start_speed':x_start_speed,'x_twenty_per_speed':x_twenty_per_speed,
     #                    'x_median_speed':x_median_speed,'x_eighty_per_speed':x_eighty_per_speed,'x_end_speed':x_end_speed,
     #                    'x_avg_speed':x_avg_speed,'x_sum_distance':x_sum_distances,'tan':tans,'start_x':start_x,
@@ -367,12 +369,11 @@ def extract_test_features(id,data,p_data):
     #     'eighty_per_speed':eighty_per_speed,'end_speed':end_speed,
     #     'tan':tans,'max_tan_difference':max_tan_differences,'tot_time':tot_time,'sum_distance':sum_distances})
     # test_df=pd.DataFrame({'id':id,'end_speed':end_speed,'tan':tans,'start_x':start_x})
-    test_df=pd.DataFrame({'id':id,'tot_time':tot_time,'start_speed':start_speed,'median_speed':median_speed,
-                          'end_speed':end_speed,'avg_speed':avg_speed,'distance':distance,'sum_distance':sum_distances,
-                          'tan':tans,'xv_var':xv_var,'ax_var':ax_var,'x_var':x_var,'time_var':time_var,
-                          'start_x':start_x})
-    # test_df=pd.DataFrame({'id':id,'tan':tans,'xv_var':xv_var,'ax_var':ax_var,'x_var':x_var,'time_var':time_var,
-    #                       'start_x': start_x, 'end_speed': end_speed})
+    # test_df=pd.DataFrame({'id':id,'tot_time':tot_time,'start_speed':start_speed,'median_speed':median_speed,
+    #                       'end_speed':end_speed,'avg_speed':avg_speed,'distance':distance,'sum_distance':sum_distances,
+    #                       'tan':tans})
+    test_df=pd.DataFrame({'id':id,'tan':tans,'xv_var':xv_var,'ax_var':ax_var,'time_var':time_var,
+                          'start_x': start_x, 'x_end_speed': x_end_speed})
     test_df.to_csv('/home/frank/data/mouse/test.csv',index=None)
 
 
