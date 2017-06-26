@@ -31,7 +31,7 @@ def count(data1,data2):
 
 
 # calc(12941,25350)
-calc(11100,20569)
+# calc(11100,20569)
 # calc(12941,24217)
 # data1=pd.read_csv('/home/frank/data/mouse/submission.csv')
 # data2=pd.read_csv('/home/frank/data/mouse/submission4.csv')
@@ -73,3 +73,4 @@ calc(11100,20569)
 # a=np.array(l)
 # print a.shape
 # print a.mean(axis=1)
+

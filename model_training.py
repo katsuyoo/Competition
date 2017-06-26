@@ -46,7 +46,7 @@ def score(y_test,y_pred):
     return 5*p*r/(2*p+3*r)*100
 
 def cv(X,y):
-    xgb = XGBClassifier(n_estimators=220,learning_rate=0.41,min_child_weight=2.3)
+    xgb = XGBClassifier(n_estimators=220,learning_rate=0.2,min_child_weight=2.3)
     xgb.fit(X,y)
     sc=make_scorer(score)
     print cross_val_score(xgb,X,y,scoring=sc,cv=4).mean()
@@ -69,7 +69,7 @@ def parm_search(clf,params,X_train,y_train):
 
 def to_submission(y_pred,id):
     n=len(y_pred)
-    # print n
+    print n
     res=[]
     for i in range(n):
         if y_pred[i]==0:
@@ -102,33 +102,33 @@ X_train=standard_data(X)
 X_test=standard_data(X_test)
 
 # cv(X_train,y_train)
+#
+# clf=XGBClassifier(n_estimators=100,learning_rate=0.3,min_child_weight=1)
+# params={'n_estimators':np.arange(100,200,10)}
+# params={'learning_rate': np.arange(0.2, 0.5, 0.02)}
 
-# clf=XGBClassifier(n_estimators=390,learning_rate=0.15)
-# params={'n_estimators':np.arange(100,400,10)}
-# params={'learning_rate': np.arange(0.1, 0.3, 0.01)}
+# clf=LinearSVC(C=150,random_state=33)
+# params={"C":np.arange(100,200,10)}
 
-# clf=LinearSVC(C=80,random_state=33)
-# params={"C":np.arange(10,100,10)}
-
-# clf=RandomForestClassifier(n_estimators=70,random_state=8650)
+# clf=RandomForestClassifier(n_estimators=70,random_state=330)
 # params={'n_estimators':np.arange(10,100,10)}
 
-# clf=GradientBoostingClassifier(n_estimators=150,learning_rate=0.11)
+clf=GradientBoostingClassifier(n_estimators=220,learning_rate=0.23)
 # params={'n_estimators':np.arange(100,400,10)}
-# params={'learning_rate': np.arange(0.1, 0.3, 0.01)}
+params={'learning_rate': np.arange(0.1, 0.3, 0.01)}
 
-# clf=BaggingClassifier(n_estimators=10,random_state=33)
+# clf=BaggingClassifier(n_estimators=10,random_state=101)
 # params={'n_estimators':np.arange(10,100,10)}
 
-clf=AdaBoostClassifier(learning_rate=0.13,random_state=33)
-# params={'n_estimators':np.arange(50,200,10)}
-params={'learning_rate': np.arange(0.01, 0.15, 0.01)}
+# clf=AdaBoostClassifier(n_estimators=140,learning_rate=1.6,random_state=33)
+# params={'n_estimators':np.arange(10,200,10)}
+# params={'learning_rate': np.arange(1.3, 2.0, 0.1)}
 
 parm_search(clf,params,X_train,y_train)
 
 
 # model training
-# xgb=XGBClassifier(n_estimators=390,learning_rate=0.15)
+# xgb=XGBClassifier(n_estimators=220,learning_rate=0.2,min_child_weight=4)
 # xgb.fit(X_train,y_train)
 # y_pred=xgb.predict(X_test)
 # to_submission(y_pred,Id)

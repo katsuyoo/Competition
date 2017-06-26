@@ -48,6 +48,8 @@ X=train_df.drop(['label'],axis=1)
 y_train=train_df['label']
 X_test=test_df.drop(['id'],axis=1)
 Id=test_df['id']
+# X_train=X.values
+# X_test=X_test.values
 X_train=standard_data(X)
 X_test=standard_data(X_test)
 
@@ -69,3 +71,15 @@ to_submission(y_pred,Id)
 # two_model:
 # clf7=XGBClassifier(n_estimators=210,learning_rate=0.21)
 # online: 66.76(20569)
+
+# feature: ['tot_time','start_speed','median_speed','end_speed','avg_speed','distance','sum_distance','tan']
+# base_model:
+# clf1 = LinearSVC(C=80, random_state=self.random_rate)
+# clf2 = XGBClassifier(n_estimators=220, learning_rate=0.41, min_child_weight=2.3)
+# clf3 = RandomForestClassifier(n_estimators=70, random_state=8650, n_jobs=-1)
+# clf4 = BaggingClassifier(n_estimators=10, random_state=33)
+# clf5 = AdaBoostClassifier(learning_rate=0.13, random_state=33)
+# clf6 = GradientBoostingClassifier(n_estimators=150, learning_rate=0.11)
+# two_model:
+# clf7=XGBClassifier(n_estimators=390,learning_rate=0.15)
+# online: 68.27(23737)

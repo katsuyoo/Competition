@@ -16,14 +16,14 @@ from sklearn.linear_model import LogisticRegression
 class Stack(object):
     def __init__(self):
         self.random_rate=33
-        clf1=LinearSVC(C=80, random_state=self.random_rate)
-        clf2=XGBClassifier(n_estimators=220,learning_rate=0.41,min_child_weight=2.3)
-        clf3=RandomForestClassifier(n_estimators=70,random_state=8650,n_jobs=-1)
-        clf4=BaggingClassifier(n_estimators=10,random_state=33)
-        clf5=AdaBoostClassifier(learning_rate=0.13,random_state=33)
-        clf6=GradientBoostingClassifier(n_estimators=150,learning_rate=0.11)
+        clf1=LinearSVC(C=60, random_state=33)
+        clf2=XGBClassifier(n_estimators=220,learning_rate=0.2,min_child_weight=2.3)
+        clf3=RandomForestClassifier(n_estimators=10,random_state=330,n_jobs=-1)
+        clf4=BaggingClassifier(n_estimators=10,random_state=101)
+        clf5=AdaBoostClassifier(n_estimators=140,learning_rate=1.6,random_state=33)
+        clf6=GradientBoostingClassifier(n_estimators=160,learning_rate=0.23,random_state=33)
 
-        clf7=XGBClassifier(n_estimators=390,learning_rate=0.15)
+        clf7=XGBClassifier(n_estimators=220,learning_rate=0.2,min_child_weight=4)
 
         base_model=[
             ['lsvc',clf1],
@@ -39,7 +39,7 @@ class Stack(object):
 
     def stacking(self,X,y,test):
         models=self.base_models
-        kf=KFold(n_splits=5,shuffle=True)
+        kf=KFold(n_splits=5,shuffle=True,random_state=4670)
         folds=list(kf.split(X,y))
         s_train=np.zeros((X.shape[0],len(models)))
         # s_test=np.zeros((test.shape[0],len(models)))
