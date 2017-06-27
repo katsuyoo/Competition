@@ -25,6 +25,7 @@ class Stack(object):
 
         clf7=XGBClassifier(n_estimators=100,learning_rate=0.12,min_child_weight=1)
 
+
         base_model=[
             ['svc',clf1],
             ['xgbc',clf2],

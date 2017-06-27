@@ -21,7 +21,7 @@ from sklearn.ensemble.gradient_boosting import GradientBoostingClassifier
 
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+from sklearn.linear_model import LogisticRegression
 
 def describe(train_df):
     g = sns.FacetGrid(train_df, col='label')
@@ -47,11 +47,13 @@ def score(y_test,y_pred):
     return 5*p*r/(2*p+3*r)*100
 
 def cv(X,y):
-    xgb = XGBClassifier(n_estimators=220,learning_rate=0.2,min_child_weight=4)
+    xgb = XGBClassifier(n_estimators=100,learning_rate=0.12,min_child_weight=1)
     xgb.fit(X,y)
+    # lr=LogisticRegression()
     sc=make_scorer(score)
-    print cross_val_score(xgb,X,y,scoring=sc,cv=5,n_jobs=-1).mean()
+    print cross_val_score(xgb,X,y,scoring=sc,cv=4,n_jobs=-1).mean()
     print xgb.feature_importances_
+
 
 def standard_data(X):
     X_scaler=StandardScaler()
@@ -84,14 +86,6 @@ def to_submission(y_pred,id):
 
 train_df=pd.read_csv('/home/frank/data/mouse/train.csv')
 test_df=pd.read_csv('/home/frank/data/mouse/test.csv')
-# black_df=pd.read_csv('/home/frank/data/mouse/black.csv')
-
-#  扩充训练集
-# add_train_df=pd.merge(test_df,black_df,on='id')
-# print add_train_df.info()
-# add_train_df=add_train_df.drop(['id'],axis=1)
-# train_df=pd.concat([train_df,add_train_df])
-# train_df.to_csv('/home/frank/data/mouse/expand_train.csv',index=None)
 
 # 查看数据集统计信息
 # print train_df.info()
@@ -99,17 +93,17 @@ test_df=pd.read_csv('/home/frank/data/mouse/test.csv')
 # describe(train_df)
 # print train_df['tan'].value_counts()
 # print train_df.describe()
-print train_df[train_df['label']==1].describe()
-print '-'*100
-print train_df[train_df['label']==0].describe()
+# print train_df[train_df['label']==1].describe()
+# print '-'*100
+# print train_df[train_df['label']==0].describe()
 # print test_df.describe()
 
 X=train_df.drop(['label'],axis=1)
 y=train_df['label']
 X_train,X_val,y_train,y_val=train_test_split(X,y,test_size=0.1,random_state=33)
 
-# print X.info()
 
+# print X.info()
 X_test=test_df.drop(['id'],axis=1)
 Id=test_df['id']
 
@@ -119,7 +113,14 @@ Id=test_df['id']
 # X_test=standard_data(X_test)
 
 # cv(X_train,y_train)
+
 # 调参
+# clf=LogisticRegression(penalty='l1')
+# params={'penalty':['l1','l2']}
+# params={'solver':['newton-cg','lbfgs','liblinear','sag']}
+# params={'multi_class':['ovr','multinomial']}
+
+
 # clf=XGBClassifier(n_estimators=100,learning_rate=0.12,min_child_weight=1)
 # params={'n_estimators':np.arange(100,500,100)}
 # params={'learning_rate': np.arange(0.1, 0.5, 0.02)}
@@ -145,11 +146,17 @@ Id=test_df['id']
 
 
 # model training
-# xgb=XGBClassifier(n_estimators=220,learning_rate=0.2,min_child_weight=4)
-# xgb.fit(X_train,y_train)
-# y_pred=xgb.predict(X_test)
+xgb=XGBClassifier(n_estimators=100,learning_rate=0.12,min_child_weight=1)
+xgb.fit(X_train,y_train)
+y_pred=xgb.predict(X_test)
+
+# lr=LogisticRegression()
+# lr.fit(X_train,y_train)
+# y_pred=lr.predict(X_test)
+# print y_pred.mean()
+
 # print score(y_val,y_pred)
-# to_submission(y_pred,Id)
+to_submission(y_pred,Id)
 
 
 # feature: ['tot_time','start_speed','median_speed','end_speed','avg_speed','distance','sum_distance','tan']

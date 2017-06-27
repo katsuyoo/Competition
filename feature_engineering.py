@@ -63,6 +63,8 @@ def read_test():
 def dis(x1,y1,x2,y2):
     return (x1-x2)**2 + (y1-y2)**2
 
+
+
 def extract_train_features(data,p_data,label):
     # tot_time:总时间, start_speed:开始速度, twenty_per_speed:20%位置的速度, median_speed:中间位置的速度, avg_speed:平均速度
     # distance:终点与目标点的距离, sum_distance:总位移, tan:相邻两点的正玄值之差, start_x: 开始位置X坐标
@@ -95,11 +97,18 @@ def extract_train_features(data,p_data,label):
     x_avg_speed=[]
     x_sum_distances=[]
 
-    x_distance = []  # 终点位置和目标位置x轴的距离
+    x_distance = []  #终点位置和目标位置x轴的距离
     xv_var=[] #速度的方差
     ax_var=[] #加速度的方差
     x_var=[] #水平位移的方差
+    y_var=[] #垂直位移的方差
     time_var=[] #时间段的方差
+
+    xv_max=[] #速度最大值
+    ax_max=[] #加速度最大值
+    x_max=[] #水平位移最大值
+    y_max=[] #垂直位移最大值
+    time_max=[] #时间段最大值
 
     # reverse_ax=[] #加速度的倒数
     # reverse_ax_var=[] #加速度倒数的方差
@@ -109,6 +118,7 @@ def extract_train_features(data,p_data,label):
         xv = []  # 速度
         ax = []  # 加速度
         x_shift = []  # 水平位移
+        y_shift = []  # 垂直位移
         time = []  # 时间段
         m=len(data[i])
         if m<5:
@@ -191,8 +201,9 @@ def extract_train_features(data,p_data,label):
             else:
                 sd = abs(data[i][j + 1][0] - data[i][j][0]) / (data[i][j + 1][-1] - data[i][j][-1])
                 xv.append([sd, data[i][j + 1][-1]])
-        for j in range(m):
-            x_shift.append(data[i][j][0])
+                x_shift.append(abs(data[i][j + 1][0] - data[i][j][0]))
+                y_shift.append(abs(data[i][j + 1][1] - data[i][j][1]))
+
         k=len(xv)
         for j in range(k - 1):
             ax.append((xv[j + 1][0] - xv[j][0]) / (xv[j+1][1] - xv[j][1]))
@@ -201,24 +212,27 @@ def extract_train_features(data,p_data,label):
         xv_var.append(np.var(xv))
         ax_var.append(np.var(ax))
         x_var.append(np.var(x_shift))
+        y_var.append(np.var(y_shift))
         time_var.append(np.var(time))
+
+        xv_max.append(np.max(xv))
+        ax_max.append(np.max(ax))
+        x_max.append(np.max(x_shift))
+        y_max.append(np.max(y_shift))
+        time_max.append(np.max(time))
 
         x_distance.append(abs(data[i][-1][0] - p_data[i][0]))
 
     # print len(tot_time),len(start_speed),len(avg_speed),len(distance),len(sum_distances),len(tans),len(start_x),len(max_tan_differences),len(label)
 
-    # train_df=pd.DataFrame({'tot_time':tot_time,'x_start_speed':x_start_speed,'x_twenty_per_speed':x_twenty_per_speed,
-    #                        'x_median_speed':x_median_speed,'x_eighty_per_speed':x_eighty_per_speed,'x_end_speed':x_end_speed,
-    #                        'x_avg_speed':x_avg_speed,'x_sum_distance':x_sum_distances,'tan':tans,'start_x':start_x,
-    #                        'stop_x':stop_x,'label':label})
-    # train_df=pd.DataFrame({'start_speed':start_speed,'median_speed':median_speed,
-    #     'eighty_per_speed':eighty_per_speed,'end_speed':end_speed,
-    #     'tan':tans,'max_tan_difference':max_tan_differences,'tot_time':tot_time,'sum_distance':sum_distances,'label':label})
-    # train_df=pd.DataFrame({'end_speed':end_speed,'tan':tans,'start_x':start_x,'label':label})
+
     # train_df=pd.DataFrame({'tot_time':tot_time,'start_speed':start_speed,'median_speed':median_speed,'end_speed':end_speed,
     #     'avg_speed':avg_speed,'distance':distance,'sum_distance':sum_distances,'tan':tans,'label':label})
-    train_df = pd.DataFrame({'tan': tans,'xv_var':xv_var,'ax_var':ax_var,'time_var':time_var,
-                             'start_x':start_x,'x_end_speed':x_end_speed,'label':label})
+    # train_df = pd.DataFrame({'tan': tans,'xv_var':xv_var,'ax_var':ax_var,'time_var':time_var,
+    #                          'start_x':start_x,'x_end_speed':x_end_speed,'label':label})
+    train_df=pd.DataFrame({'tan':tans,'xv_var':xv_var,'time_var':time_var,'start_x': start_x,
+                          'x_end_speed': x_end_speed,'x_var':x_var,'y_var':y_var,
+                          'x_max':x_max,'label':label})
     train_df.to_csv('/home/frank/data/mouse/train.csv',index=None)
 
 
@@ -255,7 +269,15 @@ def extract_test_features(id,data,p_data):
     xv_var=[] #速度的方差
     ax_var=[] #加速度的方差
     x_var=[] #水平位移的方差
+    y_var=[] #垂直位移的方差
     time_var=[] #时间段的方差
+
+    xv_max=[] #速度最大值
+    ax_max=[] #加速度最大值
+    x_max=[] #水平位移最大值
+    y_max=[] #垂直位移最大值
+    time_max=[] #时间段最大值
+
     # reverse_ax=[] #加速度的倒数
     # reverse_ax_var=[] #加速度倒数的方差
 
@@ -265,6 +287,7 @@ def extract_test_features(id,data,p_data):
         xv = []  # 速度
         ax = []  # 加速度
         x_shift = []  # 水平位移
+        y_shift = []  # 垂直位移
         time = []  # 时间段
         m=len(data[i])
         if m<5:
@@ -347,8 +370,9 @@ def extract_test_features(id,data,p_data):
             else:
                 sd = abs(data[i][j + 1][0] - data[i][j][0]) / (data[i][j + 1][-1] - data[i][j][-1])
                 xv.append([sd, data[i][j + 1][-1]])
-        for j in range(m):
-            x_shift.append(data[i][j][0])
+                x_shift.append(abs(data[i][j + 1][0] - data[i][j][0]))
+                y_shift.append(abs(data[i][j + 1][1] - data[i][j][1]))
+
         k=len(xv)
         for j in range(k - 1):
             ax.append((xv[j + 1][0] - xv[j][0]) / (xv[j+1][1] - xv[j][1]))
@@ -357,23 +381,25 @@ def extract_test_features(id,data,p_data):
         xv_var.append(np.var(xv))
         ax_var.append(np.var(ax))
         x_var.append(np.var(x_shift))
+        y_var.append(np.var(y_shift))
         time_var.append(np.var(time))
+
+        xv_max.append(np.max(xv))
+        ax_max.append(np.max(ax))
+        x_max.append(np.max(x_shift))
+        y_max.append(np.max(y_shift))
+        time_max.append(np.max(time))
 
         x_distance.append(abs(data[i][-1][0] - p_data[i][0]))
 
-    # test_df=pd.DataFrame({'id':id,'tot_time':tot_time,'x_start_speed':x_start_speed,'x_twenty_per_speed':x_twenty_per_speed,
-    #                    'x_median_speed':x_median_speed,'x_eighty_per_speed':x_eighty_per_speed,'x_end_speed':x_end_speed,
-    #                    'x_avg_speed':x_avg_speed,'x_sum_distance':x_sum_distances,'tan':tans,'start_x':start_x,
-    #                    'stop_x':stop_x})
-    # test_df=pd.DataFrame({'id':id,'start_speed':start_speed,'median_speed':median_speed,
-    #     'eighty_per_speed':eighty_per_speed,'end_speed':end_speed,
-    #     'tan':tans,'max_tan_difference':max_tan_differences,'tot_time':tot_time,'sum_distance':sum_distances})
-    # test_df=pd.DataFrame({'id':id,'end_speed':end_speed,'tan':tans,'start_x':start_x})
     # test_df=pd.DataFrame({'id':id,'tot_time':tot_time,'start_speed':start_speed,'median_speed':median_speed,
     #                       'end_speed':end_speed,'avg_speed':avg_speed,'distance':distance,'sum_distance':sum_distances,
     #                       'tan':tans})
-    test_df=pd.DataFrame({'id':id,'tan':tans,'xv_var':xv_var,'ax_var':ax_var,'time_var':time_var,
-                          'start_x': start_x, 'x_end_speed': x_end_speed})
+    # test_df=pd.DataFrame({'id':id,'tan':tans,'xv_var':xv_var,'ax_var':ax_var,'time_var':time_var,
+    #                       'start_x': start_x, 'x_end_speed': x_end_speed})
+    test_df=pd.DataFrame({'id':id,'tan':tans,'xv_var':xv_var,'time_var':time_var,'start_x': start_x,
+                          'x_end_speed': x_end_speed,'x_var':x_var,'y_var':y_var,
+                          'x_max':x_max})
     test_df.to_csv('/home/frank/data/mouse/test.csv',index=None)
 
 

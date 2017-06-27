@@ -60,7 +60,22 @@ y_pred=ms.stacking(X_train,y_train,X_test)
 to_submission(y_pred,Id)
 
 
+
+
 # stacking
+# feature: ['tan','xv_var','ax_var','time_var','start_x','x_end_speed']
+# base_model:
+# clf1 = SVC(C=1.0, random_state=33)
+# clf2 = XGBClassifier(n_estimators=220, learning_rate=0.2, min_child_weight=2.3)
+# clf3 = RandomForestClassifier(n_estimators=80, random_state=330, n_jobs=-1)
+# clf4 = BaggingClassifier(n_estimators=40, random_state=101)
+# clf5 = AdaBoostClassifier(n_estimators=70, learning_rate=1.5, random_state=33)
+# clf6 = GradientBoostingClassifier(n_estimators=250, learning_rate=0.23, random_state=33)
+# two_model:
+# clf7 = XGBClassifier(n_estimators=100, learning_rate=0.12, min_child_weight=1)
+# online: 76.14(13745)
+
+
 # feature: ['tot_time','start_speed','median_speed','end_speed','avg_speed','distance','sum_distance','tan']
 # base_model:
 # clf1 = LinearSVC(C=0.1, random_state=self.random_rate)
