@@ -63,6 +63,9 @@ to_submission(y_pred,Id)
 
 
 # stacking
+
+# feature
+
 # feature: ['tan','xv_var','ax_var','time_var','start_x','x_end_speed']
 # base_model:
 # clf1 = SVC(C=1.0, random_state=33)

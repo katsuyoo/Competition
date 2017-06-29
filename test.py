@@ -33,7 +33,7 @@ def count(data1,data2):
                 i+=1
     print cnt
     # res_df=pd.DataFrame({'id':res})
-    # res_df.to_csv('/home/frank/data/mouse/14372.csv',index=None)
+    # res_df.to_csv('/home/frank/data/mouse/14128.csv',index=None)
 
 
 # calc(8538,10000)
@@ -44,12 +44,15 @@ def count(data1,data2):
 # calc(12985,25020)
 # calc(11278,13745)
 # calc(11701,14270)
+# calc(11044,18512)
+# calc(11044,14721)
+# calc(11290,13893)
+# calc(11278,13662)
+calc(12985,36132)
 
-# calc(12000,14372)
-
-data1 = pd.read_csv('/home/frank/data/mouse/18512.csv')
-data2 = pd.read_csv('/home/frank/data/mouse/25020(4670).csv')
-count(data1,data2)
+# data1 = pd.read_csv('/home/frank/data/mouse/17791.csv')
+# data2 = pd.read_csv('/home/frank/data/mouse/36132.csv')
+# count(data1,data2)
 
 # train_df=pd.read_csv('/home/frank/data/mouse/train.csv')
 # X=train_df.drop(['label'],axis=1)

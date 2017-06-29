@@ -25,13 +25,13 @@ def gen_black(data1,data2):
                 # res.append(data1[i])
                 i+=1
     print cnt
-    # res_df=pd.DataFrame({'id':res,'label':0})
-    # res_df.to_csv('/home/frank/data/mouse/black.csv',index=None)
+    res_df=pd.DataFrame({'id':res,'label':0})
+    res_df.to_csv('/home/frank/data/mouse/black.csv',index=None)
 
 #  扩充训练集
 def expand_training():
-    data1 = pd.read_csv('/home/frank/data/mouse/12083.csv')
-    data2 = pd.read_csv('/home/frank/data/mouse/25020(4670).csv')
+    data1 = pd.read_csv('/home/frank/data/mouse/13893(76.09: 17452&25020).csv')
+    data2 = pd.read_csv('/home/frank/data/mouse/13745(76.14: 17177&25020).csv')
     gen_black(data1,data2)
     train_df = pd.read_csv('/home/frank/data/mouse/train.csv')
     test_df = pd.read_csv('/home/frank/data/mouse/test.csv')

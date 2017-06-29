@@ -112,7 +112,7 @@ Id=test_df['id']
 # X_val=standard_data(X_val)
 # X_test=standard_data(X_test)
 
-# cv(X_train,y_train)
+cv(X_train,y_train)
 
 # 调参
 # clf=LogisticRegression(penalty='l1')
