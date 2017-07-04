@@ -10,6 +10,10 @@ from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import train_test_split
 
+import warnings
+warnings.filterwarnings('ignore')
+
+import xgboost as xgb
 from xgboost.sklearn import XGBClassifier
 from sklearn.svm import LinearSVC,SVC
 from sklearn.ensemble.bagging import BaggingClassifier
@@ -23,10 +27,16 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.linear_model import LogisticRegression
 
-def describe(train_df):
-    g = sns.FacetGrid(train_df, col='label')
-    g.map(plt.hist, 'tan')
-    sns.plt.show()
+def describe(X_train):
+    # g = sns.FacetGrid(train_df, col='label')
+    # g.map(plt.hist, 'tan')
+
+    xgbc = XGBClassifier(n_estimators=100, learning_rate=0.1, min_child_weight=1)
+    xgbc.fit(X, y)
+
+    print np.array(zip(np.array(xgbc.feature_importances_),np.array(X_train.columns)))
+    # print np.array(sorted(zip(np.array(xgbc.feature_importances_),np.array(X_train.columns)),key=lambda list1:list1[0]))
+
 
 
 def score(y_test,y_pred):
@@ -47,12 +57,12 @@ def score(y_test,y_pred):
     return 5*p*r/(2*p+3*r)*100
 
 def cv(X,y):
-    xgb = XGBClassifier(n_estimators=100,learning_rate=0.12,min_child_weight=1)
-    xgb.fit(X,y)
-    # lr=LogisticRegression()
+    xgbc = XGBClassifier(n_estimators=120,learning_rate=0.1,min_child_weight=2)
+    xgbc.fit(X,y)
     sc=make_scorer(score)
-    print cross_val_score(xgb,X,y,scoring=sc,cv=4,n_jobs=-1).mean()
-    print xgb.feature_importances_
+    print cross_val_score(xgbc,X,y,scoring=sc,cv=5,n_jobs=-1).mean()
+    # print xgbc.feature_importances_
+    print np.array(sorted(zip(np.array(xgbc.feature_importances_),np.array(X_train.columns)),key=lambda list1:list1[0]))
 
 
 def standard_data(X):
@@ -64,7 +74,7 @@ def parm_search(clf,params,X_train,y_train):
     print 'search......'
     sc=make_scorer(score)
     if __name__ == '__main__':
-        gs=GridSearchCV(clf,params,cv=5,scoring=sc,n_jobs=-1)
+        gs=GridSearchCV(clf,params,cv=4,scoring=sc,n_jobs=-1)
         gs.fit(X_train,y_train)
         print gs.best_score_
         print gs.best_params_
@@ -79,13 +89,17 @@ def to_submission(y_pred,id):
             res.append(id[i])
 
     print len(res)
-    # res_df=pd.DataFrame({'id':res})
-    # res_df.to_csv('/home/frank/data/mouse/submission.csv',index=None)
+    res_df=pd.DataFrame({'id':res})
+    res_df.to_csv('/home/frank/data/mouse/submission.csv',index=None)
 
 
 
 train_df=pd.read_csv('/home/frank/data/mouse/train.csv')
 test_df=pd.read_csv('/home/frank/data/mouse/test.csv')
+# df=test_df[test_df['time_var']>1000000]
+# print df['id']
+
+# print train_df.columns
 
 # 查看数据集统计信息
 # print train_df.info()
@@ -93,15 +107,19 @@ test_df=pd.read_csv('/home/frank/data/mouse/test.csv')
 # describe(train_df)
 # print train_df['tan'].value_counts()
 # print train_df.describe()
+# train_df[train_df['label']==1].describe().to_csv('/home/frank/data/mouse/describe1.csv')
+# train_df[train_df['label']==0].describe().to_csv('/home/frank/data/mouse/describe0.csv')
 # print train_df[train_df['label']==1].describe()
 # print '-'*100
 # print train_df[train_df['label']==0].describe()
-# print test_df.describe()
+# test_df.describe().to_csv('/home/frank/data/mouse/describe_test.csv')
 
 X=train_df.drop(['label'],axis=1)
 y=train_df['label']
-X_train,X_val,y_train,y_val=train_test_split(X,y,test_size=0.1,random_state=33)
-
+# X_train,X_val,y_train,y_val=train_test_split(X,y,test_size=0.1,random_state=33)
+X_train=X
+y_train=y
+# describe(X_train)
 
 # print X.info()
 X_test=test_df.drop(['id'],axis=1)
@@ -112,7 +130,7 @@ Id=test_df['id']
 # X_val=standard_data(X_val)
 # X_test=standard_data(X_test)
 
-cv(X_train,y_train)
+# cv(X_train,y_train)
 
 # 调参
 # clf=LogisticRegression(penalty='l1')
@@ -121,19 +139,20 @@ cv(X_train,y_train)
 # params={'multi_class':['ovr','multinomial']}
 
 
-# clf=XGBClassifier(n_estimators=100,learning_rate=0.12,min_child_weight=1)
-# params={'n_estimators':np.arange(100,500,100)}
-# params={'learning_rate': np.arange(0.1, 0.5, 0.02)}
+# clf=XGBClassifier(n_estimators=120,learning_rate=0.1,min_child_weight=2)
+# params={'n_estimators':np.arange(100,200,10)}
+# params={'learning_rate': np.arange(0.1, 1, 0.1)}
+# params={'min_child_weight':[1.9,2,2.1]}
 
 # clf=SVC(C=1.0,random_state=33)
-# params={"C":np.arange(1,5,1)}
+# params={"C":np.arange(1,2,1)}
 
 # clf=RandomForestClassifier(n_estimators=80,random_state=330)
 # params={'n_estimators':np.arange(10,100,10)}
 
-# clf=GradientBoostingClassifier(n_estimators=250,learning_rate=0.23)
-# params={'n_estimators':np.arange(100,400,10)}
-# params={'learning_rate': np.arange(0.1, 0.3, 0.1)}
+# clf=GradientBoostingClassifier(n_estimators=120,learning_rate=0.1)
+# params={'n_estimators':np.arange(100,200,10)}
+# params={'learning_rate': np.arange(0.1, 1, 0.1)}
 
 # clf=BaggingClassifier(n_estimators=40,random_state=101)
 # params={'n_estimators':np.arange(10,100,10)}
@@ -145,18 +164,27 @@ cv(X_train,y_train)
 # parm_search(clf,params,X_train,y_train)
 
 
-# model training
-xgb=XGBClassifier(n_estimators=100,learning_rate=0.12,min_child_weight=1)
-xgb.fit(X_train,y_train)
-y_pred=xgb.predict(X_test)
+# # model training
+xgbc=XGBClassifier(n_estimators=85,max_depth=4)
+xgbc.fit(X_train,y_train)
+y_pro=xgbc.predict_proba(X_test)
+y_pro=np.delete(y_pro,-1,axis=1)
+y_pred=[]
 
-# lr=LogisticRegression()
-# lr.fit(X_train,y_train)
-# y_pred=lr.predict(X_test)
-# print y_pred.mean()
+for i in range(y_pro.shape[0]):
+    if y_pro[i][0]>0.5:
+        y_pred.append(0)
+    else:
+        y_pred.append(1)
 
 # print score(y_val,y_pred)
 to_submission(y_pred,Id)
+
+
+# feature: ['stop_cnt':stop_cnt,'start_x':start_x,'xv_end':xv_end,xv_std,xv_skew,ax_std,ax_max,
+# x_skew,x_kurt,x_avg,y_std,y_avg,time_std,time_skew,time_avg,time_max,d_skew,d_avg,tan_skew,cos_skew,cos_avg]
+# xgbc=XGBClassifier(n_estimators=100,learning_rate=0.1,min_child_weight=1)
+# online: 13093(76.31)
 
 
 # feature: ['tot_time','start_speed','median_speed','end_speed','avg_speed','distance','sum_distance','tan']
